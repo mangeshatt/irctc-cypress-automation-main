@@ -20,15 +20,15 @@ describe('IRCTC TATKAL BOOKING', () => {
 
     cy.clearCookies()
     cy.clearLocalStorage()
-    cy.viewport(1478, 1056)
+    cy.viewport('macbook-15')
     cy.visit('https://www.irctc.co.in/nget/train-search', {
       failOnStatusCode: false,
-      timeout: 90000
+      timeout: 50000
     })
 
 
     cy.task("log", `Website Fetching completed.........`)
-    const UPI_ID = Cypress.env().UPI_ID ? Cypress.env().UPI_ID : UPI_ID_CONFIG;
+    const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/; if (!UPI_ID || !upiRegex.test(UPI_ID)) {   throw new Error('Invalid or missing UPI_ID'); }
     const upiRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9.]+$/;
 
     const isValidUpiId = upiRegex.test(UPI_ID);
@@ -95,7 +95,7 @@ describe('IRCTC TATKAL BOOKING', () => {
         // confirming we click on same train no and seat class div if block starts.....
         if (div[0].innerText.includes(TRAIN_NO) && div[0].innerText.includes(TRAIN_COACH)) {
 
-          cy.bookUntilTatkalGetsOpen(div, TRAIN_COACH, TRAVEL_DATE, TRAIN_NO, TATKAL).then(() => {
+          cy.bookUntilTatkalGetsOpen(div, TRAIN_COACH, TRAVEL_DATE, TRAIN_NO, TATKAL, { timeout: 60000 }).then(() => {   cy.task('log', 'Tatkal booking window opened successfully'); });(div, TRAIN_COACH, TRAVEL_DATE, TRAIN_NO, TATKAL).then(() => {
             cy.task("log", 'TATKAL TIME STARTED......')
           })
 
@@ -326,4 +326,4 @@ describe('IRCTC TATKAL BOOKING', () => {
 
   })
 })
-// chrome://settings/content/siteDetails?site=https%3A%2F%2Fsecuregw.paytm.in
+// cy.visit('https://www.irctc.co.in/nget/train-search', {   failOnStatusCode: false,   timeout: 50000,   onBeforeLoad(win) {     win.localStorage.clear(); // Clear local storage to avoid permission issues   }, });
